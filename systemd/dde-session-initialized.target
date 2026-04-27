@@ -1,0 +1,13 @@
+[Unit]
+Description=dde-session-initialized target, task to initialize the desktop environment.
+OnFailure=dde-session-shutdown.target
+OnFailureJobMode=replace-irreversibly
+DefaultDependencies=no
+RefuseManualStart=yes
+RefuseManualStop=yes
+
+Requires=dde-session-core.target
+After=dde-session-core.target
+
+PartOf=dde-session.target
+Before=dde-session.target

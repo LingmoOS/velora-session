@@ -1,0 +1,25 @@
+[Unit]
+Description=DDE Quick Login Monitor
+CollectMode=inactive-or-failed
+
+Requires=dde-session@x11.service
+After=dde-session@x11.service
+
+PartOf=dde-session-pre.target
+Before=dde-session-pre.target
+
+# only in quick login mode and x11
+ConditionEnvironment=DDE_QUICKLOGIN=true
+ConditionEnvironment=XDG_SESSION_TYPE=%I
+
+# SuccessExitStatus=0,launch dde-lock.service
+OnSuccess=dde-lock.service dde-version-checker@quick-login.service dde-autostart@quick-login.service
+
+[Service]
+Slice=session.slice
+Type=notify
+ExecStart=/usr/bin/dde-quick-login
+SuccessExitStatus=0
+Restart=on-failure
+RestartSec=300ms
+StartLimitBurst=3

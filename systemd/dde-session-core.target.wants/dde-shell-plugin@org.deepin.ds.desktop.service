@@ -1,0 +1,23 @@
+[Unit]
+Description=dde-shell for desktop
+RefuseManualStart=no
+RefuseManualStop=no
+StartLimitBurst=3
+CollectMode=inactive-or-failed
+
+Requisite=dde-session-pre.target
+After=dde-session-pre.target
+
+PartOf=dde-session-core.target
+Before=dde-session-core.target
+
+Requires=dbus.socket
+After=dbus.socket
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dde-shell -p %I
+TimeoutStartSec=infinity
+Slice=session.slice
+Restart=always
+RestartSec=1s

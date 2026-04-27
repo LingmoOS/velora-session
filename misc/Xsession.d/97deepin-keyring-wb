@@ -1,0 +1,7 @@
+#!/bin/sh
+# Trigger dde-keyring.service via systemd user instance.
+# This service handles gnome-keyring-daemon and deepin-keyring-whitebox.
+
+if [ -f /usr/lib/systemd/user/dde-keyring.service ]; then
+    systemctl --user start dde-keyring.service
+fi

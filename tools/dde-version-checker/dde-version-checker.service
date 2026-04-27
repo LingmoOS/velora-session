@@ -1,0 +1,15 @@
+[Unit]
+Description=dde-version-checker service
+CollectMode=inactive-or-failed
+
+Requisite=dde-session-core.target
+After=dde-session-core.target
+
+PartOf=dde-session-initialized.target
+Before=dde-session-initialized.target
+
+[Service]
+Type=simple
+# 在快速登录模式下跳过，由 quick-login 的 OnSuccess 触发专用版本
+ExecCondition=/bin/sh -c '[ "$DDE_QUICKLOGIN" != "true" ]'
+ExecStart=/usr/bin/dde-version-checker
