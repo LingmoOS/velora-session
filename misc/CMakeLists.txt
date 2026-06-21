@@ -1,4 +1,4 @@
-configure_file(xsessions/deepin.desktop.in xsessions/deepin.desktop)
+configure_file(xsessions/lingmo.desktop.in xsessions/lingmo.desktop)
 
 set(XSESSION
     ${CMAKE_CURRENT_SOURCE_DIR}/Xsession.d/00deepin-dde-env

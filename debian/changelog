@@ -1,4 +1,10 @@
-velora-session (2.0.23.lingm.1) unstable; urgency=medium
+velora-session (2.0.25.lingmo.1) unstable; urgency=medium
+
+  * new release for Lingmo OS.
+
+ -- Lingmo OS Team <team@lingmo.org>  Mon, 22 Jun 2026 00:14:00 +0800
+
+velora-session (2.0.23.lingmo.1) unstable; urgency=medium
 
   * new release for Lingmo OS.
 
