@@ -1,5 +1,5 @@
 [Unit]
-Description=DDE Dock (legacy)
+Description=DDE Shell (legacy)
 RefuseManualStart=no
 RefuseManualStop=no
 StartLimitBurst=3
@@ -21,7 +21,7 @@ After=org.desktopspec.ApplicationManager1.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/dde-dock
+ExecStart=/usr/bin/dde-shell -C %I --serviceName=org.deepin.dde.shell -d org.deepin.ds.desktop
 TimeoutStartSec=infinity
 Slice=session.slice
 Restart=always
