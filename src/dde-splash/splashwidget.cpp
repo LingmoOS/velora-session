@@ -41,7 +41,10 @@ void SplashWidget::loadLogo()
         QSvgRenderer renderer(path);
         if (!renderer.isValid())
             continue;
-        QSize size(256, 256);
+        QSize defaultSize = renderer.defaultSize();
+        int logoWidth = qMin(defaultSize.width(), 260);
+        int logoHeight = defaultSize.height() * logoWidth / defaultSize.width();
+        QSize size(logoWidth, logoHeight);
         m_logo = QPixmap(size);
         m_logo.fill(Qt::transparent);
         QPainter p(&m_logo);
@@ -50,8 +53,8 @@ void SplashWidget::loadLogo()
         break;
     }
 
-    if (m_logo.isNull()) {
-        m_logo = QPixmap(256, 256);
+    if (m_logo.isNull())
+        m_logo = QPixmap(1, 1);
         m_logo.fill(Qt::transparent);
     }
 }
