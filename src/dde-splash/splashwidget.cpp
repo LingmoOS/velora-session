@@ -53,7 +53,7 @@ void SplashWidget::loadLogo()
         break;
     }
 
-    if (m_logo.isNull())
+    if (m_logo.isNull()) {
         m_logo = QPixmap(1, 1);
         m_logo.fill(Qt::transparent);
     }
