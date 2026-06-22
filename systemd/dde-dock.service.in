@@ -1,0 +1,15 @@
+[Unit]
+Description=DDE Dock
+PartOf=dde-session-core.target
+After=dde-session-pre.target
+Before=dde-session-initialized.target
+
+[Service]
+Type=simple
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/dde-dock
+Restart=on-failure
+RestartSec=1s
+Slice=session.slice
+
+[Install]
+WantedBy=dde-session-core.target

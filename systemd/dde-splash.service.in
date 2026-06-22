@@ -1,0 +1,12 @@
+[Unit]
+Description=DDE Splash Screen
+PartOf=dde-session-core.target
+After=dde-session-pre.target
+Before=dde-session-initialized.target
+
+[Service]
+Type=simple
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/dde-splash
+Restart=no
+TimeoutStopSec=5
+Slice=session.slice

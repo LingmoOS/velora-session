@@ -32,3 +32,4 @@ list(APPEND DBUSEXTENDED_SOURCE
 
 add_subdirectory("dde-session-ctl")
 add_subdirectory("dde-session")
+add_subdirectory("dde-splash")

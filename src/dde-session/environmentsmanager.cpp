@@ -123,7 +123,7 @@ void EnvironmentsManager::createGeneralEnvironments()
     }
 
     m_envMap.insert("GNOME_DESKTOP_SESSION_ID", "this-is-deprecated");
-    m_envMap.insert("XDG_CURRENT_DESKTOP", "Lingmo (Velora)");
+    m_envMap.insert("XDG_CURRENT_DESKTOP", "Deepin:Lingmo (Velora)");
     m_envMap.insert("QT_DBL_CLICK_DIST", QString::number(15 * scaleFactor));
 
     if (sessionType == "x11") {
