@@ -46,8 +46,6 @@ install(DIRECTORY DESTINATION lib/systemd/user/dde-session-core.target.wants/)
 set(DDE_SESSION_CORE_WANTS
     dde-session-core.target.wants/dde-shell@DDE.service
     dde-session-core.target.wants/dde-shell-plugin@org.deepin.ds.desktop.service
-    dde-session-core.target.wants/dde-splash.service
-    dde-session-core.target.wants/dde-dock.service
 )
 
 # dde-session-initialized.target.wants - other desktop services
