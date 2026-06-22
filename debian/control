@@ -16,6 +16,7 @@ Build-Depends:
  libxfixes-dev,
  pkg-config,
  qt6-base-dev,
+ libqt6svg6-dev,
  libxcb1-dev,
 Standards-Version: 4.5.0
 Homepage: https://github.com/LingmoOS/velora-session
