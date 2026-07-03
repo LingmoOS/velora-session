@@ -10,7 +10,7 @@ static const char *kDockService = "org.deepin.dde.Dock1";
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName("dde-splash");
+    app.setApplicationName("lingmo-splash");
 
     SplashWidget splash;
     splash.show();

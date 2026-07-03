@@ -10,8 +10,8 @@ configure_file(dde-session-shutdown.service.in
 configure_file(dde-keyring.service.in
                dde-keyring.service
                @ONLY)
-configure_file(dde-splash.service.in
-               dde-splash.service
+configure_file(lingmo-splash.service.in
+               lingmo-splash.service
                @ONLY)
 configure_file(dde-dock.service.in
                dde-dock.service
@@ -26,7 +26,7 @@ set(SERVICES
     ${CMAKE_CURRENT_BINARY_DIR}/dde-session-exit-task.service
     ${CMAKE_CURRENT_BINARY_DIR}/dde-session-shutdown.service
     ${CMAKE_CURRENT_BINARY_DIR}/dde-keyring.service
-    ${CMAKE_CURRENT_BINARY_DIR}/dde-splash.service
+    ${CMAKE_CURRENT_BINARY_DIR}/lingmo-splash.service
     ${CMAKE_CURRENT_BINARY_DIR}/dde-dock.service
     dde-session-shutdown.target
     dde-session.target
@@ -62,7 +62,7 @@ install_symlink(dde-session@x11.service dde-session-pre.target.wants)
 install_symlink(dde-quick-login@x11.service dde-session-pre.target.wants)
 install_symlink(dde-shell@DDE.service dde-session-core.target.wants)
 install_symlink(dde-shell-plugin@org.deepin.ds.desktop.service dde-session-core.target.wants)
-install_symlink(dde-splash.service dde-session-core.target.wants)
+install_symlink(lingmo-splash.service dde-session-core.target.wants)
 install_symlink(dde-dock.service dde-session-core.target.wants)
 install_symlink(dde-lock.service dde-session-initialized.target.wants)
 install_symlink(dde-polkit-agent.service dde-session-initialized.target.wants)
