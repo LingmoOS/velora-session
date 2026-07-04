@@ -36,7 +36,6 @@ install(FILES ${SERVICES} DESTINATION lib/systemd/user/)
 install(DIRECTORY DESTINATION lib/systemd/user/dde-session-pre.target.wants/)
 set(DDE_SESSION_PRE_WANTS
     dde-session-pre.target.wants/dde-session@x11.service
-    dde-session-pre.target.wants/dde-quick-login@x11.service
 )
 
 
@@ -59,7 +58,6 @@ install(FILES ${DDE_SESSION_PRE_WANTS} DESTINATION lib/systemd/user/)
 install(FILES ${DDE_SESSION_CORE_WANTS} DESTINATION lib/systemd/user/)
 install(FILES ${DDE_SESSION_INITIALIZED_WANTS} DESTINATION lib/systemd/user/)
 install_symlink(dde-session@x11.service dde-session-pre.target.wants)
-install_symlink(dde-quick-login@x11.service dde-session-pre.target.wants)
 install_symlink(dde-shell@DDE.service dde-session-core.target.wants)
 install_symlink(dde-shell-plugin@org.deepin.ds.desktop.service dde-session-core.target.wants)
 install_symlink(lingmo-splash.service dde-session-core.target.wants)

@@ -1,3 +1,9 @@
+velora-session (2.1.28.lingmo.1) unstable; urgency=medium
+
+  * remove: dde-quick-login 和 dde-version-checker 移除
+
+ -- Lingmo OS Team <team@lingmo.org>  Sat, 04 Jul 2026 12:00:00 +0800
+
 velora-session (2.1.27.lingmo.1) unstable; urgency=medium
 
   * refactor: dde-splash 更名为 lingmo-splash
