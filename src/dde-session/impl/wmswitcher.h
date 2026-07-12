@@ -30,7 +30,7 @@ private:
     void showOSD(const QString &osd) const;
 
 private:
-    com::deepin::wm *m_wmInter;
+    com::lingmo::wm *m_wmInter;
 };
 
 #endif // WMSWITCHER_H

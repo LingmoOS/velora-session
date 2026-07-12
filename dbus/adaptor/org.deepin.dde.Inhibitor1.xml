@@ -1,4 +1,4 @@
-   <interface name="org.deepin.dde.Inhibitor1">
+   <interface name="org.lingmo.Inhibitor1">
     <method name='GetAppId'>
         <arg type="s" direction="out"></arg>
     </method>

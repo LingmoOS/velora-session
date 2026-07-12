@@ -1,5 +1,5 @@
 <interface
- name="org.deepin.dde.WMSwitcher1">
+ name="org.lingmo.WMSwitcher1">
     <method name="AllowSwitch">
         <arg name="outArg0" type="b" direction="out"></arg>
     </method>

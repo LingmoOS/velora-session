@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     const bool isSessionExit = parser.isSet(sessionExit);
 
     if (parser.isSet(logout)) {
-        org::deepin::dde::Session1 session("org.deepin.dde.Session1", "/org/deepin/dde/Session1", QDBusConnection::sessionBus());
+        org::lingmo::Session1 session("org.lingmo.Session1", "/org/lingmo/Session1", QDBusConnection::sessionBus());
         session.Logout();
 
         return 0;

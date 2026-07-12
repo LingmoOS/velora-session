@@ -94,8 +94,8 @@ void EnvironmentsManager::createGeneralEnvironments()
     double scaleFactor = 1.0;
 
     if (sessionType == "x11") {
-        QDBusInterface dbusInterface("org.deepin.dde.XSettings1", "/org/deepin/dde/XSettings1",
-        "org.deepin.dde.XSettings1", QDBusConnection::sessionBus());
+        QDBusInterface dbusInterface("org.lingmo.XSettings1", "/org/lingmo/XSettings1",
+        "org.lingmo.XSettings1", QDBusConnection::sessionBus());
         if (dbusInterface.isValid()) {
             QDBusReply<double> scaleFactorReply = dbusInterface.call("GetScaleFactor");
             if (scaleFactorReply.isValid()) {

@@ -23,7 +23,7 @@ extern "C" {
 
 XSettingsChecker::XSettingsChecker(QObject *parent)
     : QObject(parent) // TODO XSettings1服务当前仍处于startdde中，后期可能会独立出来
-    , m_xSettingsInter(new QDBusInterface("org.deepin.dde.XSettings1", "/org/deepin/dde/XSettings1", "org.deepin.dde.XSettings1", QDBusConnection::sessionBus(), this))
+    , m_xSettingsInter(new QDBusInterface("org.lingmo.XSettings1", "/org/lingmo/XSettings1", "org.lingmo.XSettings1", QDBusConnection::sessionBus(), this))
 {
 
 }
@@ -53,14 +53,14 @@ void XSettingsChecker::initQtTheme()
     double fontSize = settings.value("FontSize").toDouble();
 
     if (iconTheme.isEmpty() || fontSize - 0 < (1e-6)) {
-        QDBusInterface dbusInterface("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
+        QDBusInterface dbusInterface("org.lingmo.Appearance1", "/org/lingmo/Appearance1",
             "org.freedesktop.DBus.Properties", QDBusConnection::sessionBus());
         if (!dbusInterface.isValid()) {
             return;
         }
 
         if (iconTheme.isEmpty()) {
-            QDBusPendingReply<QString> iconThemeReply = dbusInterface.call("Get", "org.deepin.dde.Appearance1", "IconTheme");
+            QDBusPendingReply<QString> iconThemeReply = dbusInterface.call("Get", "org.lingmo.Appearance1", "IconTheme");
             if (iconThemeReply.isValid()) {
                 iconTheme = iconThemeReply.value();
                 settings.setValue("IconThemeName", iconTheme);
@@ -69,7 +69,7 @@ void XSettingsChecker::initQtTheme()
         }
 
         if (fontSize - 0 < (1e-6)) {
-            QDBusPendingReply<double> fontSizeReply = dbusInterface.call("Get", "org.deepin.dde.Appearance1", "fontSize");;
+            QDBusPendingReply<double> fontSizeReply = dbusInterface.call("Get", "org.lingmo.Appearance1", "fontSize");;
             if (fontSizeReply.isValid()) {
                 fontSize = fontSizeReply.value();
                 settings.setValue("FontSize", fontSize);

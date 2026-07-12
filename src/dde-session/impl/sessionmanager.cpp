@@ -76,7 +76,7 @@ SessionManager::SessionManager(QObject *parent)
     , m_currentUid(QString::number(getuid()))
     , m_stage(0)
     , m_currentSessionPath("/")
-    , m_audioInter(new org::deepin::dde::Audio1("org.deepin.dde.Audio1", "/org/deepin/dde/Audio1", QDBusConnection::sessionBus(), this))
+    , m_audioInter(new org::lingmo::Audio1("org.lingmo.Audio1", "/org/lingmo/Audio1", QDBusConnection::sessionBus(), this))
     , m_login1ManagerInter(new org::freedesktop::login1::Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_login1UserInter(new org::freedesktop::login1::User("org.freedesktop.login1", m_login1ManagerInter->GetUser(getuid()).value().path(), QDBusConnection::systemBus(), this))
     , m_login1SessionInter(new org::freedesktop::login1::Session("org.freedesktop.login1", m_login1UserInter->display().path.path(), QDBusConnection::systemBus(), this))
@@ -90,11 +90,11 @@ SessionManager::SessionManager(QObject *parent)
     // 处理异常退出的情况
     handleOSSignal();
 
-    auto appearanceConfig = DConfig::create("org.deepin.dde.appearance", "org.deepin.dde.appearance", QString(), this);
-    m_soundTheme = appearanceConfig->value("Sound_Theme", "deepin").toString();
+    auto appearanceConfig = DConfig::create("org.lingmo.dde.appearance", "org.lingmo.dde.appearance", QString(), this);
+    m_soundTheme = appearanceConfig->value("Sound_Theme", "lingmo").toString();
     connect(appearanceConfig, &DConfig::valueChanged, this, [this, appearanceConfig] (const QString &key) {
         if (key == "Sound_Theme") {
-            m_soundTheme = appearanceConfig->value("Sound_Theme", "deepin").toString();
+            m_soundTheme = appearanceConfig->value("Sound_Theme", "lingmo").toString();
         }
     });
     // 播放登录提示音
@@ -138,7 +138,7 @@ void SessionManager::initConnections()
         }
     });
 
-    if (Dconf::GetValue("com.deepin.dde.startdde", "", "swap-sched-enabled", QVariant(false)).toBool()) {
+    if (Dconf::GetValue("com.lingmo.dde.startdde", "", "swap-sched-enabled", QVariant(false)).toBool()) {
         initSwapSched();
     }
 
@@ -246,7 +246,7 @@ void SessionManager::setCurrentSessionPath(QDBusObjectPath value)
 
 bool SessionManager::AllowSessionDaemonRun()
 {
-    // TODO: run org.deepin.dde.Daemon1.StartPart2
+    // TODO: run org.lingmo.dde.Daemon1.StartPart2
     return true;
 }
 
@@ -413,14 +413,14 @@ void SessionManager::RequestHibernate()
     setDPMSMode(false);
 
     // NOTE: do we need it anymore?
-    // if (Dconf::SetValue("com.deepin.dde.startdde", "", "quick-black-screen", false)) {
+    // if (Dconf::SetValue("com.lingmo.dde.startdde", "", "quick-black-screen", false)) {
     //     setDPMSMode(false);
     // }
 }
 
 void SessionManager::RequestLock()
 {
-    QDBusInterface inter("org.deepin.dde.LockFront1", "/org/deepin/dde/LockFront1", "org.deepin.dde.LockFront1", QDBusConnection::sessionBus());
+    QDBusInterface inter("org.lingmo.LockFront1", "/org/lingmo/LockFront1", "org.lingmo.LockFront1", QDBusConnection::sessionBus());
     
     // 使用异步调用方式防止当前线程阻塞
     QDBusPendingCall async = inter.asyncCall("Show");
@@ -457,14 +457,14 @@ void SessionManager::RequestShutdown()
 
 void SessionManager::RequestSuspend()
 {
-    if (QFile("/etc/deepin/no_suspend").exists()) {
+    if (QFile("/etc/lingmo/no_suspend").exists()) {
         QThread::sleep(1);
         setDPMSMode(false);
         return;
     }
 
     // 使用窗管接口进行黑屏处理
-    if (Dconf::SetValue("com.deepin.dde.startdde", "", "quick-black-screen", QVariant(false))) {
+    if (Dconf::SetValue("com.lingmo.dde.startdde", "", "quick-black-screen", QVariant(false))) {
         QDBusInterface inter("org.kde.KWin", "/BlackScreen", "org.kde.kwin.BlackScreen", QDBusConnection::sessionBus(), this);
         const QDBusMessage &msg = inter.call("setActive", true);
         if (!msg.errorName().isEmpty())
@@ -529,7 +529,7 @@ void SessionManager::prepareShutdown(bool force)
 
 void SessionManager::clearCurrentTty()
 {
-    QDBusInterface inter("org.deepin.dde.Daemon1", "/org/deepin/dde/Daemon1", "org.deepin.dde.Daemon1", QDBusConnection::systemBus(), this);
+    QDBusInterface inter("org.lingmo.Daemon1", "/org/lingmo/Daemon1", "org.lingmo.Daemon1", QDBusConnection::systemBus(), this);
     const QDBusMessage &msg = inter.call("ClearTty", m_login1SessionInter->vTNr());
     if (!msg.errorMessage().isEmpty())
         qWarning() << "failed to clear tty, error: " << msg.errorMessage();
@@ -593,7 +593,7 @@ void SessionManager::stopLangSelector()
                  , QStringList()
                  << "-ef"
                  << "-u"
-                 << QString::number(getuid()) << "/usr/lib/deepin-daemon/langselector"
+                 << QString::number(getuid()) << "/usr/lib/lingmo-daemon/langselector"
                  );
 }
 
@@ -658,9 +658,9 @@ void SessionManager::stopObexService()
 
 void SessionManager::stopPulseAudioService()
 {
-    QDBusInterface interface("org.deepin.dde.Audio1"
-                              , "/org/deepin/dde/Audio1"
-                              , "org.deepin.dde.Audio1"
+    QDBusInterface interface("org.lingmo.Audio1"
+                              , "/org/lingmo/dde/Audio1"
+                              , "org.lingmo.dde.Audio1"
                               , QDBusConnection::sessionBus(), this);
     interface.setTimeout(1000);
     auto msg = interface.call("NoRestartPulseAudio");
@@ -691,9 +691,9 @@ void SessionManager::stopDock()
 
 void SessionManager::disconnectAudioDevices()
 {
-    auto msg = QDBusInterface("org.deepin.dde.Bluetooth1"
-                              , "/org/deepin/dde/Bluetooth1"
-                              , "org.deepin.dde.Bluetooth1"
+    auto msg = QDBusInterface("org.lingmo.Bluetooth1"
+                              , "/org/lingmo/dde/Bluetooth1"
+                              , "org.lingmo.dde.Bluetooth1"
                               , QDBusConnection::systemBus(), this)
             .call("DisconnectAudioDevices");
     if (!msg.errorMessage().isEmpty()) {
@@ -706,7 +706,7 @@ void SessionManager::disconnectAudioDevices()
 // 准备好关机时的音频文件
 void SessionManager::preparePlayShutdownSound()
 {
-    const QString &soundFile = "/tmp/deepin-shutdown-sound.json";
+    const QString &soundFile = "/tmp/lingmo-shutdown-sound.json";
 
     const QString &event = "system-shutdown";
     bool canPlay = canPlayEvent(event);
@@ -733,10 +733,10 @@ bool SessionManager::canPlayEvent(const QString &event)
         return false;
     }
 
-    const QString service = "org.deepin.dde.SoundEffect1";
-    const QString path = "/org/deepin/dde/SoundEffect1";
+    const QString service = "org.lingmo.SoundEffect1";
+    const QString path = "/org/lingmo/dde/SoundEffect1";
     const QString interface = "org.freedesktop.DBus.Properties";
-    const QString methodInterface = "org.deepin.dde.SoundEffect1";
+    const QString methodInterface = "org.lingmo.dde.SoundEffect1";
 
     QDBusInterface dbusInterface(service, path, interface, QDBusConnection::sessionBus());
     QDBusReply<QDBusVariant> enabledReply = dbusInterface.call("Get", service, "Enabled");
@@ -815,8 +815,8 @@ void SessionManager::playLogoutSound()
         return;
     }
 
-    auto sinkInter = new org::deepin::dde::audio1::Sink(
-                "org.deepin.dde.Audio1"
+    auto sinkInter = new org::lingmo::audio1::Sink(
+                "org.lingmo.dde.Audio1"
                 , sink.path()
                 , QDBusConnection::sessionBus()
                 , this);
@@ -871,7 +871,7 @@ void SessionManager::shutdown(bool force)
     }
 
     //NOTE: do we need it anymore?
-    if (Dconf::SetValue("com.deepin.dde.startdde", "", "quick-black-screen", false)) {
+    if (Dconf::SetValue("com.lingmo.dde.startdde", "", "quick-black-screen", false)) {
         setDPMSMode(false);
     }
 
@@ -889,7 +889,7 @@ void SessionManager::reboot(bool force)
     }
 
     // NOTE: do we need it anymore?
-    if (Dconf::SetValue("com.deepin.dde.startdde", "", "quick-black-screen", QVariant(false))) {
+    if (Dconf::SetValue("com.lingmo.dde.startdde", "", "quick-black-screen", QVariant(false))) {
         setDPMSMode(false);
     }
 
@@ -898,9 +898,9 @@ void SessionManager::reboot(bool force)
 
 void SessionManager::emitLockChanged(bool locked)
 {
-   QDBusMessage msg = QDBusMessage::createSignal("/org/deepin/dde/SessionManager1", "org.freedesktop.DBus.Properties", "PropertiesChanged");
+   QDBusMessage msg = QDBusMessage::createSignal("/org/lingmo/SessionManager1", "org.freedesktop.DBus.Properties", "PropertiesChanged");
    QList<QVariant> arguments;
-   arguments.push_back("org.deepin.dde.SessionManager1");
+   arguments.push_back("org.lingmo.dde.SessionManager1");
    QVariantMap changedProps;
    changedProps.insert("Locked", locked);
    arguments.push_back(changedProps);
@@ -932,8 +932,8 @@ void SessionManager::emitCurrentUidChanged(QString uid)
 // 自动登录时session已经启动了，不能使用alsa，会和通过pa或者pipewire抢占通道，导致音频模块异常
 inline void SessionManager::playSoundAutoLogin(const QString &event)
 {
-    QDBusInterface soundPlayerInter("org.deepin.dde.SoundEffect1", "/org/deepin/dde/SoundEffect1",
-        "org.deepin.dde.SoundEffect1", QDBusConnection::sessionBus());
+    QDBusInterface soundPlayerInter("org.lingmo.SoundEffect1", "/org/lingmo/SoundEffect1",
+        "org.lingmo.SoundEffect1", QDBusConnection::sessionBus());
     QDBusMessage reply = soundPlayerInter.call("PlaySound", event);
     if (reply.type() == QDBusMessage::ErrorMessage) {
         qWarning() << "Failed to call Play:" << event << reply.errorMessage();
@@ -943,8 +943,8 @@ inline void SessionManager::playSoundAutoLogin(const QString &event)
 // 注销时，不能使用pa或者pipewire，因为session可能会退出，导致没有音效，应该直接使用alsa
 inline void SessionManager::playSoundLogout(const QString &event)
 {
-    QDBusInterface soundPlayerInter("org.deepin.dde.SoundThemePlayer1", "/org/deepin/dde/SoundThemePlayer1",
-        "org.deepin.dde.SoundThemePlayer1", QDBusConnection::systemBus());
+    QDBusInterface soundPlayerInter("org.lingmo.SoundThemePlayer1", "/org/lingmo/SoundThemePlayer1",
+        "org.lingmo.SoundThemePlayer1", QDBusConnection::systemBus());
     QDBusMessage reply = soundPlayerInter.call("Play", m_soundTheme, event, QString());
     if (reply.type() == QDBusMessage::ErrorMessage) {
         qWarning() << "Failed to call Play:" << event << reply.errorMessage();
@@ -988,7 +988,7 @@ void SessionManager::handleLoginSessionUnlocked()
         // 会使用系统通知报告锁屏失败。 而在此种特殊情况下 kill 掉它，并不会造成明显问题。
         do {
             org::freedesktop::DBus dbusInter("org.freedesktop.DBus", "/org/freedesktop/DBus", QDBusConnection::sessionBus());
-            QDBusPendingReply<QString> ownerReply = dbusInter.GetNameOwner("org.deepin.dde.LockFront1");
+            QDBusPendingReply<QString> ownerReply = dbusInter.GetNameOwner("org.lingmo.LockFront1");
             if (ownerReply.isError()) {
                 qWarning() << "failed to get lockFront service owner";
                 return;

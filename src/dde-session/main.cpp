@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         org::freedesktop::systemd1::Manager systemdDBus("org.freedesktop.systemd1", "/org/freedesktop/systemd1", QDBusConnection::sessionBus());
         startSystemdUnit(systemdDBus, dmService, "replace");
 
-        QDBusServiceWatcher *watcher = new QDBusServiceWatcher("org.deepin.dde.Session1", QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForUnregistration, &app);
+        QDBusServiceWatcher *watcher = new QDBusServiceWatcher("org.lingmo.Session1", QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForUnregistration, &app);
         watcher->connect(watcher, &QDBusServiceWatcher::serviceUnregistered, [&] {
             qInfo() << "dde session exit";
             startSystemdUnit(systemdDBus, "dde-session-exit-task.service", "replace");
@@ -115,18 +115,18 @@ int main(int argc, char *argv[])
 
     auto* session = new Session(&app);
     new Session1Adaptor(session);
-    QDBusConnection::sessionBus().registerService("org.deepin.dde.Session1");
-    QDBusConnection::sessionBus().registerObject("/org/deepin/dde/Session1", "org.deepin.dde.Session1", session);
+    QDBusConnection::sessionBus().registerService("org.lingmo.Session1");
+    QDBusConnection::sessionBus().registerObject("/org/lingmo/Session1", "org.lingmo.Session1", session);
 
     SessionManager::instance()->init();
     new SessionManager1Adaptor(SessionManager::instance());
-    QDBusConnection::sessionBus().registerService("org.deepin.dde.SessionManager1");
-    QDBusConnection::sessionBus().registerObject("/org/deepin/dde/SessionManager1", "org.deepin.dde.SessionManager1", SessionManager::instance());
+    QDBusConnection::sessionBus().registerService("org.lingmo.SessionManager1");
+    QDBusConnection::sessionBus().registerObject("/org/lingmo/SessionManager1", "org.lingmo.SessionManager1", SessionManager::instance());
 
     auto *wmSwitcher = new WMSwitcher(&app);
     new WMSwitcher1Adaptor(wmSwitcher);
-    QDBusConnection::sessionBus().registerService("org.deepin.dde.WMSwitcher1");
-    QDBusConnection::sessionBus().registerObject("/org/deepin/dde/WMSwitcher1", wmSwitcher);
+    QDBusConnection::sessionBus().registerService("org.lingmo.WMSwitcher1");
+    QDBusConnection::sessionBus().registerObject("/org/lingmo/WMSwitcher1", wmSwitcher);
 
     // TODO 这部分都是一次性运行，可以拆分成不同的oneshot服务
     QThreadPool::globalInstance()->start([] {

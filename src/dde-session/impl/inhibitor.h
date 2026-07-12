@@ -16,7 +16,7 @@ public:
 
 public Q_SLOTS:
     inline const QString &GetAppId() { return m_appId; }
-    inline const QDBusObjectPath GetClientId() { return QDBusObjectPath(QString("/org/deepin/dde/Inhibitors/Inhibitor_%1").arg(m_index)); }
+    inline const QDBusObjectPath GetClientId() { return QDBusObjectPath(QString("/org/lingmo/Inhibitors/Inhibitor_%1").arg(m_index)); }
     inline const uint &GetFlags() { return m_flags; }
     inline const QString &GetReason() { return m_reason; }
     inline const uint &GetToplevelXid() { return m_topLevelXid; }

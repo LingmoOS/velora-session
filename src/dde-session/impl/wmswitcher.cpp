@@ -10,17 +10,17 @@
 
 #include <DDBusSender>
 
-#define WM_NAME_3D "deepin wm"
-#define WM_NAME_2D "deepin metacity"
+#define WM_NAME_3D "lingmo wm"
+#define WM_NAME_2D "lingmo metacity"
 #define OSD_Switch_WM_2D "SwitchWM2D"
 #define OSD_Switch_WM_3D "SwitchWM3D"
 #define OSD_Switch_WM_ERROR "SwitchWMError"
 
 WMSwitcher::WMSwitcher(QObject *parent)
     : QObject(parent)
-    , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
+    , m_wmInter(new com::lingmo::wm("com.lingmo.wm", "/com/lingmo/wm", QDBusConnection::sessionBus(), this))
 {
-    connect(m_wmInter, &com::deepin::wm::compositingEnabledChanged, this, &WMSwitcher::onCompositingEnabledChanged);
+    connect(m_wmInter, &com::lingmo::wm::compositingEnabledChanged, this, &WMSwitcher::onCompositingEnabledChanged);
 }
 
 bool WMSwitcher::AllowSwitch() const
@@ -59,9 +59,9 @@ void WMSwitcher::onCompositingEnabledChanged(bool enable)
 void WMSwitcher::showOSD(const QString &osd) const
 {
     DDBusSender()
-            .service("org.deepin.dde.Osd1")
+            .service("org.lingmo.Osd1")
             .path("/")
-            .interface("org.deepin.dde.Osd1")
+            .interface("org.lingmo.Osd1")
             .method("ShowOSD")
             .arg(osd)
             .call();

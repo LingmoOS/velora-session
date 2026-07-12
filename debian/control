@@ -1,4 +1,4 @@
-Source: velora-session
+Source: lingmo-session
 Section: devel
 Priority: optional
 Maintainer: Lingmo OS Team <team@lingmo.org>
@@ -19,18 +19,18 @@ Build-Depends:
  libqt6svg6-dev,
  libxcb1-dev,
 Standards-Version: 4.5.0
-Homepage: https://github.com/LingmoOS/velora-session
+Homepage: https://github.com/LingmoOS/lingmo-session
 
-Package: dde-session
+Package: lingmo-session
 Architecture: any
 Depends:
  jq,
  sed (>= 4),
- dde-daemon (>= 6.1.26),
+ lingmo-daemon (>= 6.1.26),
  libdtkdata (>=5.7.18),
  libdtk6core (>=6.0.38),
  systemd,
  ${misc:Depends},
  ${shlibs:Depends},
 Description: dde session module
-  dde-session is used for launching DDE components systemd service project.
+  lingmo-session is used for launching DDE components systemd service project.

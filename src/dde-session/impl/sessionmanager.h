@@ -135,7 +135,7 @@ private:
     QDBusObjectPath m_currentSessionPath;
 
     // dbus client
-    org::deepin::dde::Audio1 *m_audioInter;
+    org::lingmo::Audio1 *m_audioInter;
     org::freedesktop::login1::Manager *m_login1ManagerInter;
     org::freedesktop::login1::User *m_login1UserInter;
     org::freedesktop::login1::Session *m_login1SessionInter;

@@ -1,3 +1,9 @@
+velora-session (2.1.29.lingmo.1) unstable; urgency=medium
+
+  * Lingmo namespace migration.
+
+ -- Lingmo OS Team <team@lingmo.org>  Sun, 12 Jul 2026 23:11:19 +0800
+
 velora-session (2.1.28.lingmo.1) unstable; urgency=medium
 
   * remove: dde-quick-login 和 dde-version-checker 移除
