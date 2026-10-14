@@ -1,3 +1,22 @@
+velora-session (2.1.29.lingmo5u1) unstable; urgency=medium
+
+  * fix: 缩短登录到桌面的等待，并修复注销后再登录黑屏
+    - 登录慢：SessionManager 构造函数在成员初始化表里直接对生成代理做同步
+      .value()（login1 的 GetUser 与 User.Display 两条路径）。D-Bus 默认超时
+      25s，两次最多阻塞 50s，而这段代码跑在 sd_notify(READY=1) 之前。改用
+      显式 3s 超时的 QDBusInterface 查询（会话路径改用 GetSessionByPID）
+    - 黑屏：dde-session-manager.service 是 Type=notify 且未写 TimeoutStartSec
+      （systemd 默认 90s），启动一慢即判失败；而该 unit 与三个
+      dde-session-*.target 都带 OnFailure=dde-session-shutdown.target，失败就
+      拆掉整个会话。显式给 TimeoutStartSec=300
+    - 为什么每次登录都黑屏：user manager 注销后常驻、failed 状态不会自动清，
+      而本仓库没有任何 ResetFailed 调用。现在在 dde-session 启动早期先
+      ResetFailed，避免一次失败永久毒化后续每次登录
+    - Xsession 里触发 dde-keyring.service 改为 --no-block，原同步 start 会因该
+      unit 的 TimeoutStartSec=180 把会话启动阻塞最多 3 分钟
+
+ -- Lingmo OS Team <team@lingmo.org>  Wed, 14 Oct 2026 17:00:02 +0800
+
 velora-session (2.1.28.lingmo.1) unstable; urgency=medium
 
   * remove: dde-quick-login 和 dde-version-checker 移除

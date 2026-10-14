@@ -10,6 +10,10 @@ Before=dde-session-pre.target
 
 [Service]
 Type=notify
+# 默认 90s 太紧：会话启动一旦被拖慢（例如 login1 查询慢），单元就被判失败，
+# 而本 unit 与各 dde-session-*.target 都带 OnFailure=dde-session-shutdown.target，
+# 失败即拆掉整个会话 -> 黑屏。给足余量，让"慢"不再等于"进不去桌面"。
+TimeoutStartSec=300
 NotifyAccess=main
 ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/dde-session --systemd-service
 ExecStopPost=@CMAKE_INSTALL_FULL_LIBEXECDIR@/dde-session-ctl --shutdown

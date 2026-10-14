@@ -3,5 +3,7 @@
 # This service handles gnome-keyring-daemon and deepin-keyring-whitebox.
 
 if [ -f /usr/lib/systemd/user/dde-keyring.service ]; then
-    systemctl --user start dde-keyring.service
+    # 必须 --no-block：dde-keyring.service 是 oneshot 且 TimeoutStartSec=180，
+    # 同步 start 会把整个 X session 启动阻塞最多 3 分钟
+    systemctl --user start --no-block dde-keyring.service
 fi

@@ -3,6 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sessionmanager.h"
+
+#include <QDBusInterface>
+#include <QDBusObjectPath>
+#include <QDBusReply>
 #include "inhibitor.h"
 #include "inhibitor1adaptor.h"
 #include "utils/dconf.h"
@@ -70,6 +74,38 @@
     qDebug() << service << " state: " << reply.value();\
     }\
 
+// login1 的两条路径原先在成员初始化表里直接调生成代理的同步 .value()：
+// D-Bus 默认超时 25 秒，两次最多阻塞 50 秒；而这段代码跑在 sd_notify(READY=1)
+// 之前，于是"从 SDDM 到桌面"要等将近一分钟。这里改用显式超时的 QDBusInterface
+// 查询，把每步上限压到 3 秒。
+static QString resolveLogin1UserPath()
+{
+    QDBusInterface iface("org.freedesktop.login1", "/org/freedesktop/login1",
+                         "org.freedesktop.login1.Manager", QDBusConnection::systemBus());
+    iface.setTimeout(3000);
+    const QDBusReply<QDBusObjectPath> reply = iface.call("GetUser", static_cast<uint>(getuid()));
+    if (!reply.isValid()) {
+        qWarning() << "failed to query login1 user path:" << reply.error().message();
+        return QString();
+    }
+    return reply.value().path();
+}
+
+static QString resolveLogin1SessionPath()
+{
+    QDBusInterface iface("org.freedesktop.login1", "/org/freedesktop/login1",
+                         "org.freedesktop.login1.Manager", QDBusConnection::systemBus());
+    iface.setTimeout(3000);
+    // GetSessionByPID 返回本进程所在会话，等价于原来的 User.Display 路径，
+    // 且不必解析 login1 的 (so) 结构体
+    const QDBusReply<QDBusObjectPath> reply = iface.call("GetSessionByPID", static_cast<uint>(getpid()));
+    if (!reply.isValid()) {
+        qWarning() << "failed to query login1 session path:" << reply.error().message();
+        return QString();
+    }
+    return reply.value().path();
+}
+
 SessionManager::SessionManager(QObject *parent)
     : QObject(parent)
     , m_locked(false)
@@ -78,8 +114,8 @@ SessionManager::SessionManager(QObject *parent)
     , m_currentSessionPath("/")
     , m_audioInter(new org::deepin::dde::Audio1("org.deepin.dde.Audio1", "/org/deepin/dde/Audio1", QDBusConnection::sessionBus(), this))
     , m_login1ManagerInter(new org::freedesktop::login1::Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
-    , m_login1UserInter(new org::freedesktop::login1::User("org.freedesktop.login1", m_login1ManagerInter->GetUser(getuid()).value().path(), QDBusConnection::systemBus(), this))
-    , m_login1SessionInter(new org::freedesktop::login1::Session("org.freedesktop.login1", m_login1UserInter->display().path.path(), QDBusConnection::systemBus(), this))
+    , m_login1UserInter(new org::freedesktop::login1::User("org.freedesktop.login1", resolveLogin1UserPath(), QDBusConnection::systemBus(), this))
+    , m_login1SessionInter(new org::freedesktop::login1::Session("org.freedesktop.login1", resolveLogin1SessionPath(), QDBusConnection::systemBus(), this))
     , m_systemd1ManagerInter(new org::freedesktop::systemd1::Manager("org.freedesktop.systemd1", "/org/freedesktop/systemd1", QDBusConnection::sessionBus(), this))
     , m_DBusInter(new org::freedesktop::DBus("org.freedesktop.DBus", "/org/freedesktop/DBus", QDBusConnection::sessionBus(), this))
     , m_isVM(detectVirtualMachine())

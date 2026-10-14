@@ -88,6 +88,21 @@ int main(int argc, char *argv[])
 
         EnvironmentsManager().init();
 
+        // 上一次会话遗留的失败单元必须清掉：user manager 注销后常驻，failed 状态
+        // 不会自动消失，而 dde-session-manager.service 与三个 dde-session-*.target
+        // 都带 OnFailure=dde-session-shutdown.target —— 残留的 failed 会让下一次
+        // 登录一启动就关掉会话，表现就是"注销后再登录一直黑屏"（换会话也一样）。
+        {
+            QDBusInterface userSystemd("org.freedesktop.systemd1", "/org/freedesktop/systemd1",
+                                       "org.freedesktop.systemd1.Manager",
+                                       QDBusConnection::sessionBus());
+            const QDBusMessage resetReply = userSystemd.call("ResetFailed");
+            if (resetReply.type() == QDBusMessage::ErrorMessage)
+                qWarning() << "failed to reset failed units:" << resetReply.errorMessage();
+            else
+                qInfo() << "cleared failed session units";
+        }
+
         QString dmService = "dde-session.target";
         qInfo() << "start dm service:" << dmService;
         org::freedesktop::systemd1::Manager systemdDBus("org.freedesktop.systemd1", "/org/freedesktop/systemd1", QDBusConnection::sessionBus());
